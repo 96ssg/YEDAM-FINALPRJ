@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yedam.tfprj.admin.worker.mapper.WorkerMapper">
+
+    <select id="allWorkerList" resultType="com.yedam.tfprj.admin.worker.service.WorkerVO">
+        select *
+        from staff_information
+        where staff_status_cd = 0
+    </select>
+
+    <select id="getWorkerList" resultType="com.yedam.tfprj.admin.worker.service.WorkerVO">
+        select worker_id,
+               staff_status_cd,
+               worker_name,
+               phone_no,
+               birth,
+               military_cd,
+               memo,
+               startday,
+               position_cd,
+               late,
+               absence,
+               usertype,
+               to_char(going_time, 'HH24:mi'),
+               to_char(quitting_time, 'hh24:mi'),
+               allpay,
+               lastMonthPay
+        from staff_information
+        WHERE staff_Status_Cd = 0
+    </select>
+
+    <select id="getExecl" resultType="map">
+        select worker_id as "아이디",
+               case when staff_status_cd = 0 then '근무중' else '퇴직' end as "근무상태",
+               worker_name as "이름",
+               phone_no as "전화번호",
+               startday as "시작일",
+               case when gender = 0 then '남' else '여' end as "성별",
+               allpay as "총 급여"
+        from staff_information
+        where worker_Id not in('admin')
+    </select>
+
+    <select id="getWorkerListStaffCd1" resultType="com.yedam.tfprj.admin.worker.service.WorkerVO">
+        select worker_id,
+               staff_status_cd,
+               worker_name,
+               phone_no,
+               birth,
+               military_cd,
+               memo,
+               startday,
+               position_cd,
+               late,
+               absence,
+               usertype,
+               to_char(going_time, 'HH24:mi'),
+               to_char(quitting_time, 'hh24:mi'),
+               allpay
+        from staff_information
+        WHERE staff_Status_Cd = 1
+    </select>
+
+    <select id="getWorker" resultType="com.yedam.tfprj.admin.worker.service.WorkerVO">
+        select * from staff_information
+        where worker_id = #{workerId}
+    </select>
+
+    <update id="staffStatusCdUpdate">
+        UPDATE staff_information SET staff_status_cd = #{staffStatusCd}
+        WHERE worker_id = #{workerId}
+    </update>
+
+    <update id="workerDetailUpdate">
+        UPDATE staff_information
+        <set>
+            <if test="phoneNo != null and phoneNo != ''">
+                phone_No = #{phoneNo},
+            </if>
+                gender = #{gender},
+                military_cd = #{militaryCd},
+            <if test="postcode != ''">
+                postcode = #{postcode},
+                roadAddress = #{roadAddress},
+                detailAddress = #{detailAddress},
+                jibunAddress = #{jibunAddress},
+            </if>
+            <if test="memo != null and memo != ''">
+                memo = #{memo},
+            </if>
+                birth = #{birth},
+            <if test="originalFileName != null and originalFileName != ''">
+                fileName = #{fileName},
+                filePath = #{filePath},
+            </if>
+            <if test="positionCd != ''">
+                position_cd = #{positionCd},
+            </if>
+            <if test="payPerHour != ''">
+                payPerHour = #{payPerHour},
+            </if>
+            <if test="lastMonthPay != ''">
+                lastMonthPay = #{lastMonthPay},
+            </if>
+        </set>
+        where worker_id = #{workerId}
+    </update>
+
+    <insert id="admWorkerHrmWrite" parameterType="com.yedam.tfprj.admin.worker.service.WorkerVO">
+        INSERT INTO staff_information(worker_id,
+                                      staff_status_cd,
+                                      worker_name,
+                                      phone_no,
+                                      birth,
+                                      military_cd,
+                                      memo,
+                                      startday,
+                                      position_cd,
+                                      late,
+                                      absence,
+                                      usertype,
+                                      password,
+                                      gender,
+                                      postcode,
+                                      roadaddress,
+                                      jibunaddress,
+                                      filename,
+                                      filepath,
+                                      payperhour,
+                                      lastMonthPay)
+        VALUES(
+            #{workerId},
+            #{staffStatusCd},
+            #{workerName},
+            #{phoneNo},
+            #{birth},
+            #{militaryCd},
+            #{memo},
+            #{startDay},
+            #{positionCd},
+            0,
+            0,
+            #{userType},
+            #{password},
+            #{gender},
+            #{postcode},
+            #{roadAddress},
+            #{jibunAddress},
+            #{fileName},
+            #{filePath},
+            #{payPerHour},
+            #{lastMonthPay})
+    </insert>
+
+    <update id="signUpUpdate">
+        update staff_information
+            set going_time = (case when usertype = 0
+                                    then to_date('2022-05-20 13:00', 'yyyy-mm-dd hh24:mi')
+                                    when usertype = 1
+                                    then to_date('2022-05-20 19:30', 'yyyy-mm-dd hh24:mi')
+                                    end),
+            quitting_time =   (case when usertype = 0
+                                    then to_date('2022-05-20 19:30', 'yyyy-mm-dd hh24:mi')
+                                    when usertype = 1
+                                    then to_date('2022-05-20 00:00', 'yyyy-mm-dd hh24:mi')
+                                    end)
+    </update>
+
+    <select id="loginSelect" resultType="com.yedam.tfprj.admin.worker.service.WorkerVO">
+        select * from staff_information
+        where worker_id = #{workerId}
+        and password = #{password}
+    </select>
+
+    <select id="isIdCheck" resultType="com.yedam.tfprj.admin.worker.service.WorkerVO">
+        select * from staff_information
+        where worker_id = #{workerId}
+    </select>
+
+    <update id="updateAllLateAbsence">
+        update staff_information
+        set late = #{isLate},
+            absence = #{isAbsence}
+        where worker_id = #{workerId}
+    </update>
+
+    <update id="updateLastMonthPay">
+        update staff_information
+        set lastMonthPay = #{lastMonthPay}
+        where worker_id = #{workerId}
+    </update>
+
+    <update id="updateSumPay">
+        update staff_information
+        set allPay = #{allPay}
+        where worker_id = #{workerId}
+    </update>
+
+
+</mapper>
+

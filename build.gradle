@@ -1,0 +1,40 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.7'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.yedam'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+apply plugin: 'war'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'com.oracle.ojdbc:ojdbc8:19.3.0.0'
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
+    implementation group: 'com.github.pagehelper', name: 'pagehelper-spring-boot-starter', version: '1.4.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+    implementation 'org.apache.poi:poi-ooxml:5.2.2'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-test'
+    implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5', version: '3.0.4.RELEASE'
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+7

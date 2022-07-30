@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yedam.tfprj.client.team.mapper.TeamMapper">
+    <resultMap type="com.yedam.tfprj.client.team.service.TeamVO" id="teamMap">
+        <id property="teamId" column="TEAM_ID"/>
+        <result property="leader" column="LEADER"/>
+        <result property="win" column="WIN"/>
+        <result property="totalGameCnt" column="TOTAL_GAME_CNT"/>
+        <result property="lose" column="LOSE"/>
+        <result property="teamName" column="TEAM_NAME"/>
+    </resultMap>
+
+    <insert id="createTeam" parameterType="com.yedam.tfprj.client.team.service.TeamVO">
+        INSERT INTO TEAM VALUES( seq_team.nextVal, #{leader},0,0,0,#{teamName},null)
+    </insert>
+
+    <select id="findTeam" resultType="com.yedam.tfprj.client.team.service.TeamVO"
+            parameterType="com.yedam.tfprj.client.team.service.TeamVO">
+        SELECT * FROM TEAM WHERE LEADER=#{leader}
+    </select>
+
+    <select id="teamAll" resultType="com.yedam.tfprj.client.team.service.TeamVO">
+        SELECT ROWNUM, A.*
+        FROM (SELECT*FROM TEAM ORDER BY TEAM_ID) A
+    </select>
+
+    <select id="admSearchTeam" parameterType="com.yedam.tfprj.client.team.service.TeamVO"
+            resultType="com.yedam.tfprj.client.team.service.TeamVO">
+        SELECT ROWNUM, A.*
+        FROM (SELECT*FROM TEAM ORDER BY TEAM_ID) A
+        WHERE TEAM_NAME LIKE '%' || #{teamName} || '%'
+    </select>
+
+</mapper>
